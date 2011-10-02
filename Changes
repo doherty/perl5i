@@ -1,3 +1,52 @@
+2.8.1
+  New Features
+  * %hash->each() is guaranteed to iterate through the entire hash.
+    [github 142]
+
+  Doc Changes
+  * Document the very useful %hash->each( func ($k, $v) { ... } ).
+    [github 142]
+  * Add perl5ifaq entry: "How do I merge two hashes?"
+  * Add perl5ifaq entry: "How can I get the unique keys from multiple hashes?"
+  * Minor POD glitches and spelling fixes from Debian.
+    [rt.cpan.org 71253] [rt.cpan.org 71254]
+
+  Test Fixes
+  * Updated tests for new version of Child. (Chad Granum)
+
+  Bug Fixes
+  * Depend on the newest version of Child. (Chad Granum)
+
+
+2.8.0  Sat Sep 24 21:36:32 PDT 2011
+  Bug Fixes
+  * Depend on a newer, more reliable version of Devel::Declare.  Lets perl5i work
+    with Devel::REPL. [github 153]
+  * Depend on a newer indirect.pm to avoid leaks into eval on 5.10. [rt.cpan.org 64521]
+  * Quiet the overzealous "v-string in use/require non-portable" warning from
+    5.10.0. [github 174]
+
+  New Features
+  * Added a list() keyword to force list context.  Compliments scalar().
+    [github #169] (Mike Doherty)
+  * `strict vars` is now off for perl5i one-liners. [github #63] (Mike Doherty)
+  * alias() will no longer issue "subroutine redefined" warnings.
+    There was no way to make them honor "no warnings 'redefine'". [github #185]
+    (Mike Doherty)
+  * -Mperl5i now means -Mperl5i::latest rather than spitting at you.
+    [github #193] (Mike Doherty)
+  * $string->reverse now always reverses $string regardless of context.
+    [github #182]
+
+  Doc Changes
+  * Removed unnecessarily detailed docs about Child.
+
+  Misc
+  * Delegate Unicode stuff to utf8::all. [github #190]
+  * checksum() now using the core Digest::SHA module instead of
+    Digest::SHA1. [github #196] (Mike Doherty)
+
+
 2.6.1  Thu, 24 Mar 2011 16:33:39 +1100
   Bug Fixes
   * methods() can handle modules like Fcntl with weird things in their
