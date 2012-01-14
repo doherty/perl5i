@@ -45,13 +45,77 @@ method map( $code ) {
 }
 
 method as_hash{
-	my @result = CORE::map{ $_ => 1 } @$self;
-	return wantarray ? @result : \@result;
+    my %result = CORE::map { $_ => 1 } @$self;
+    return wantarray ? %result : \%result;
 }
+
+
+method pick ( $num ){
+    Carp::croak("pick() takes the number of elements to pick")
+      unless defined $num;
+    Carp::croak("pick() takes a positive integer or zero, not '$num'")
+      unless $num->is_integer && ($num->is_positive or $num == 0);
+    
+    if($num >= @$self){
+        my @result = List::Util::shuffle(@$self);
+        return wantarray ? @result : \@result;
+    }
+    
+    # for the first position in the array, generate a random number that gives
+    # that element an n/N chance of being picked (where n is the number of elements to pick and N is the total array size);
+    # repeat for the rest of the array, each time altering the probability of
+    # the element being picked to reflect the number of elements picked so far and the number left. 
+    my $num_left = @$self;
+    my @result;
+    my $i=0;
+    while($num > 0){
+        my $rand = int(rand($num_left));
+        if($rand < $num){
+            push(@result, $self->[$i]);
+            $num--;
+        }
+        $num_left--;
+        $i++;
+    }
+    
+    return wantarray ? @result : \@result;
+}
+
+
+method pick_one() {
+    return @$self[int rand @$self];
+}
+
 
 method grep($filter) {
     my @result = CORE::grep { $_ ~~ $filter } @$self;
 
+    return wantarray ? @result : \@result;
+}
+
+method popn($times) {
+    Carp::croak("popn() takes the number of elements to pop")
+      unless defined $times;
+    Carp::croak("popn() takes a positive integer or zero, not '$times'")
+      unless $times->is_integer && ($times->is_positive or $times == 0);
+
+    # splice() will choke if you walk off the array, so rein it in
+    $times = scalar(@$self) if ($times > scalar(@$self));
+
+    my @result = splice(@$self, -$times, $times);
+    return wantarray ? @result : \@result;
+}
+
+method shiftn($times) {
+    Carp::croak("shiftn() takes the number of elements to shift")
+      unless defined $times;
+    Carp::croak("shiftn() takes a positive integer or zero, not '$times'")
+      unless $times->is_integer && ($times->is_positive or $times == 0);
+
+    # splice() will choke if you walk off the array, so rein it in
+    $times = scalar(@$self) if ($times > scalar(@$self));
+
+    my @result = splice(@$self, 0, $times);
     return wantarray ? @result : \@result;
 }
 
