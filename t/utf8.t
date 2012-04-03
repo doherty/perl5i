@@ -17,8 +17,13 @@ use Test::More;
 
     # Test the standard handles and all newly opened handles are utf8
     ok open my $test_fh, ">", "perlio_test";
-    END { unlink "perlio_test" }
-    for my $fh (*STDOUT, *STDIN, *STDERR, $test_fh) {
+    END { unlink 'perlio_test' if -e 'perlio_test' }
+    TODO: {
+        local $TODO = 'autodie clobbers IO layers';
+        my @layers = PerlIO::get_layers($test_fh);
+        ok(@layers->grep(qr/utf8/)->flatten) or diag explain { $test_fh => \@layers};
+    }
+    for my $fh (*STDOUT, *STDIN, *STDERR) {
         my @layers = PerlIO::get_layers($fh);
         ok(@layers->grep(qr/utf8/)->flatten) or diag explain { $fh => \@layers };
     }
@@ -28,7 +33,7 @@ use Test::More;
 # And off
 {
     ok open my $test_fh, ">", "perlio_test2";
-    END { unlink "perlio_test2" }
+    END { unlink 'perlio_test2' if -e 'perlio_test2' }
 
     my @layers = PerlIO::get_layers($test_fh);
     ok( !grep /utf8/, @layers ) or diag explain { $test_fh => \@layers };
