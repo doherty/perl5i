@@ -52,8 +52,9 @@ use Test::More;
    my @result;
    my @array = (1,2,3,4,5);
    ok !eval { @array->foreach(func() {}); 1 };
-   is $@, sprintf "Function passed to foreach takes no arguments at %s line %d\n",
-                  __FILE__, __LINE__-2;
+   my $warning = sprintf "Function passed to foreach takes no arguments at %s line %d",
+                 __FILE__, __LINE__-2;
+   like $@, qr{^\Q$warning\E};
 }
 
 done_testing;
